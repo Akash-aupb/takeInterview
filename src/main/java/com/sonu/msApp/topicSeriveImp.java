@@ -8,7 +8,7 @@ public class topicSeriveImp implements topicService{
 	@Override
 	public void createTopic(String name) {
 		
-		topic.setName(name);
+		//topic.setName(name);
 		
 	}
 

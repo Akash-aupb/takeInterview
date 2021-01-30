@@ -13,6 +13,21 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+
+import java.io.IOException;
+import java.sql.Date;
+import java.util.Properties;
+
+import javax.mail.Message;
+import javax.mail.MessageRemovedException;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,9 +48,40 @@ public class MsAppApplication {
 		SpringApplication.run(MsAppApplication.class, args);
 	}
 	
+	private void sendmail() throws IOException, MessagingException{
+		Properties pro = new Properties();
+		pro.put("mail.smtp.auth", "true");
+		pro.put("mail.smtp.starttls.enable", "true");
+		pro.put("mail.smtp.host", "smtp.gmail.com");
+		pro.put("mail.smtp.port", "587");
+		
+		Session session = Session.getInstance(pro, new javax.mail.Authenticator() {
+		      protected PasswordAuthentication getPasswordAuthentication() {
+		         return new PasswordAuthentication("akashkkr.kmr@gmail.com", "9852292295");
+		      }
+		   });
+		
+
+		   Message msg = new MimeMessage(session);
+		   msg.setFrom(new InternetAddress("akashkkr.kmr@gmail.com", false));
+		   
+		   msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse("akaskuma@gmail.com"));
+		   msg.setSubject("Welcome to takeInterview");
+		   msg.setContent("This is the POC", "text/html");
+		   msg.setSentDate(new java.util.Date());
+		   Transport.send(msg);
+	}
+	
 	@RequestMapping(value="/")
-	public String hello() {
-		logger.info("this is from hello  method");
+	public String hello() throws AddressException, MessagingException, IOException {
+		try {
+			sendmail();
+		} catch (IOException | MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		logger.info("this is from hello  method , now calling send email function");
+		
 		return "Hello world";
 	}
 
